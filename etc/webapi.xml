@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+@author Maciej Sławik <maciekslawik@gmail.com>
+-->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!--Here you can define custom REST/SOAP Api routes and the implementations.-->
+    <!--ACL resources can be specified to limit access to the endpoints.-->
+    <route method="GET" url="/V1/samples/:id">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="getById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/samples/search">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="DELETE" url="/V1/samples/:id">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/samples/getByOrderId/:id">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="getByOrderId"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <!--API endpoints for saving sample data in checkout-->
+    <route url="/V1/carts/mine/set-sample-form-fields" method="POST">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="saveSampleFromCheckout"/>
+        <resources>
+            <resource ref="self" />
+        </resources>
+        <data>
+            <parameter name="cartId" force="true">%cart_id%</parameter>
+        </data>
+    </route>
+    <route url="/V1/guest-carts/:cartId/set-sample-form-fields" method="POST">
+        <service class="MSlwk\Sample\Api\Data\SampleRepositoryInterface" method="saveSampleFromGuestCheckout"/>
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+
+</routes>

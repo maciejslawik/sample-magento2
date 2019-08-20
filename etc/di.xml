@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!--
+@author Maciej Sławik <maciekslawik@gmail.com>
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!--Preference section-->
+
+    <!--Dependency injection configuration that tell ObjectManager which class should be injected-->
+    <!--if a constructor has dependency from "for".-->
+    <preference for="MSlwk\Sample\Api\ConfigProviderInterface"
+                type="MSlwk\Sample\Model\Config\ConfigProvider" />
+
+    <preference for="MSlwk\Sample\Api\Data\SampleInterface"
+                type="MSlwk\Sample\Model\Sample" />
+
+    <preference for="MSlwk\Sample\Api\Data\SampleRepositoryInterface"
+                type="MSlwk\Sample\Model\SampleRepository" />
+
+    <preference for="MSlwk\Sample\Api\Data\SampleSearchResultInterface"
+                type="MSlwk\Sample\Model\Data\SampleSearchResult" />
+
+    <preference for="MSlwk\Sample\Api\Amqp\MessageInterface"
+                type="MSlwk\Sample\Model\Amqp\Message"/>
+
+    <preference for="MSlwk\Sample\Api\Amqp\SubscriberInterface"
+                type="MSlwk\Sample\Model\Amqp\Subscriber"/>
+
+
+    <!--You can also use preference to overwrite a class-->
+    <preference for="Magento\Catalog\Controller\Adminhtml\Product\Save"
+                type="MSlwk\Sample\Controller\Adminhtml\Product\Save" />
+
+    <!--End of preference section-->
+
+
+    <!--UI component listing data providers section-->
+
+    <!--Virtual type is a class that doesn't exist as a file but can be injected if necessary. We define the data providers-->
+    <!--for our listing, filters pools collections used by the listing.-->
+    <virtualType name="SamplesGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+        <arguments>
+            <argument name="collection" xsi:type="object" shared="false">MSlwk\Sample\Model\ResourceModel\Sample\Collection</argument>
+            <argument name="filterPool" xsi:type="object" shared="false">SamplesGridFilterPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="SamplesGridFilterPool" type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                <item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="sample_listing_data_source" xsi:type="string">MSlwk\Sample\Model\ResourceModel\Sample\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="MSlwk\Sample\Model\ResourceModel\Sample\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">mslwk_sample</argument>
+            <argument name="resourceModel" xsi:type="string">MSlwk\Sample\Model\ResourceModel\Sample</argument>
+        </arguments>
+    </virtualType>
+
+    <!--End of UI component listing data providers section-->
+
+    <!--Logger virtual type-->
+
+    <virtualType name="sampleLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers"  xsi:type="array">
+                <item name="debug" xsi:type="object">MSlwk\Sample\Logger\Handler\Sample</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="amqpLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers"  xsi:type="array">
+                <item name="debug" xsi:type="object">MSlwk\Sample\Logger\Handler\AmqpMessage</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!--End of logger virtual type-->
+
+    <!--Dependency injection section-->
+
+    <type name="MSlwk\Sample\Observer\ProductSaveController">
+        <arguments>
+            <argument name="logger" xsi:type="object">sampleLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="MSlwk\Sample\Plugin\ProductResource">
+        <arguments>
+            <argument name="logger" xsi:type="object">sampleLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="MSlwk\Sample\Model\Amqp\Subscriber">
+        <arguments>
+            <argument name="logger" xsi:type="object">amqpLogger</argument>
+        </arguments>
+    </type>
+
+    <!--End of dependency injection section-->
+
+    <!--Plugins section-->
+
+    <type name="Magento\Catalog\Model\ResourceModel\Product">
+        <plugin name="mslwk_sample_productresource" type="MSlwk\Sample\Plugin\ProductResource" sortOrder="1" />
+    </type>
+
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="order_sample_extension_attribute" type="MSlwk\Sample\Plugin\OrderRepository"/>
+    </type>
+
+    <!--End of plugins section-->
+
+    <!--Console commands section-->
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="lm-sample:sample-create"
+                      xsi:type="object">MSlwk\Sample\Console\Command\CreateSampleCommand</item>
+                <item name="lm-sample:message-publish"
+                      xsi:type="object">MSlwk\Sample\Console\Command\PublishMessageCommand</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!--End of console commands section-->
+    
+</config>

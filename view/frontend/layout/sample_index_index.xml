@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+@author Maciej Sławik <maciekslawik@gmail.com>
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+
+        <referenceContainer name="content">
+
+            <!--We create a block that will be rendered inside "content" container, which is the main container of-->
+            <!--a page. We define the class of the block, it's name and template. Optionally you can define an alias-->
+            <!--and determine which block it should be before or after(using names of the blocks)-->
+            <!--Since Magento 2.2 declaring a block class is optional (a base block class will be used).-->
+            <!--Since Magento 2.2 ViewModels where introduced to provide a way of injecting data into views without-->
+            <!--creating custom block classes-->
+            <block class="MSlwk\Sample\Block\Index"
+                   template="MSlwk_Sample::index.phtml"
+                   name="mslwk_sample_index"
+                   as="lm_smpl_index"
+                   cacheable="false"
+                   after="-"
+            >
+                <arguments>
+                    <argument name="view_model" xsi:type="object">MSlwk\Sample\ViewModel\Index</argument>
+                </arguments>
+            </block>
+
+        </referenceContainer>
+    </body>
+</page>

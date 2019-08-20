@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+@author Maciej Sławik <maciekslawik@gmail.com>
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!--Here we declare the event we want to observe and an ObserverInterface implementation-->
+    <!--that will observe.-->
+    <event name="mslwk_sample_product_save_controller">
+        <observer name="mslwk_sample_product_save_controller_observer"
+                  instance="MSlwk\Sample\Observer\ProductSaveController" />
+    </event>
+
+    <!--Linking sample from checkout to a new order-->
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="mslwk_sample_link_to_order" instance="MSlwk\Sample\Observer\SaveSampleToOrder" />
+    </event>
+</config>

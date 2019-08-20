@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+@author Maciej Sławik <maciekslawik@gmail.com>
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <!--We define an item for the main menu in admin panel. If no parent is specified-->
+        <!--then a whole tab is created. We can define sort order of the new element and ACL-->
+        <!--resource needed to see the item in the menu.-->
+        <add id="MSlwk_Sample::main_menu" title="MSlwk"
+             module="MSlwk_Sample" sortOrder="80"
+             resource="MSlwk_Sample::sample_manage" />
+        <add id="MSlwk_Sample::sample_list" title="Samples"
+             module="MSlwk_Sample" sortOrder="1" parent="MSlwk_Sample::main_menu"
+             action="sample/sample/index" resource="MSlwk_Sample::sample_manage" />
+    </menu>
+</config>

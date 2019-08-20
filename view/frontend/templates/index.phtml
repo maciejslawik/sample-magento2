@@ -1,0 +1,48 @@
+<?php
+/**
+ * @author      Maciej Sławik <maciekslawik@gmail.com>
+ * Github:      https://github.com/maciejslawik
+ */
+
+//It is a good practise to create a PHPDoc with information about the class of the block
+//that is injected into the view. This way your IDE will provide hints about available functions
+/**
+ * @var \MSlwk\Sample\Block\Index $block
+ */
+
+/**
+ * @var \MSlwk\Sample\ViewModel\Index $viewModel
+ */
+$viewModel = $block->getViewModel();
+$samples = $viewModel->getSamples()->getItems();
+?>
+<div id="sample-grid-container">
+    <h3><?= __('Loaded from view model') ?></h3>
+    <?php foreach ($samples as $sample) : ?>
+        <p class="sample-box">
+            <?= __('ID')?>: <?= $sample->getId() ?><br/>
+            <?= __('Title')?>: <?= $sample->getTitle() ?><br/>
+            <?= __('Description')?>: <?= $sample->getDescription() ?>
+        </p>
+    <?php endforeach; ?>
+</div>
+
+<div id="sample-grid-container-2" data-bind="scope:'sampleListComponent'">
+    <h3><?= __('Loaded from API') ?></h3>
+
+    <!-- ko template: getTemplate() --><!-- /ko -->
+    <script type="text/x-magento-init">
+    {
+        "#sample-grid-container-2": {
+            "Magento_Ui/js/core/app": {
+               "components": {
+                    "sampleListComponent": {
+                        "component": "MSlwk_Sample/js/sampleList",
+                        "template" : "MSlwk_Sample/sampleList"
+                    }
+                }
+            }
+        }
+    }
+    </script>
+</div>
